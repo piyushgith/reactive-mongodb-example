@@ -1,5 +1,8 @@
 package com.example.reactive.mongodb.controller;
 
+import java.time.Duration;
+import java.time.LocalTime;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,17 +41,19 @@ public class TweetController {
 
 	@GetMapping("/tweets/{id}")
 	public Mono<ResponseEntity<Tweet>> getTweetById(@PathVariable(value = "id") String tweetId) {
-		return tweetRepository.findById(tweetId).map(savedTweet -> ResponseEntity.ok(savedTweet))
+		return tweetRepository.findById(tweetId)
+				.map(savedTweet -> ResponseEntity.ok(savedTweet))
 				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 
 	@PutMapping("/tweets/{id}")
 	public Mono<ResponseEntity<Tweet>> updateTweet(@PathVariable(value = "id") String tweetId,
 			@Valid @RequestBody Tweet tweet) {
-		return tweetRepository.findById(tweetId).flatMap(existingTweet -> {
-			existingTweet.setText(tweet.getText());
-			return tweetRepository.save(existingTweet);
-		}).map(updatedTweet -> new ResponseEntity<>(updatedTweet, HttpStatus.OK))
+		return tweetRepository.findById(tweetId)
+				.flatMap(existingTweet -> {
+					existingTweet.setText(tweet.getText());
+					return tweetRepository.save(existingTweet);})
+				.map(updatedTweet -> new ResponseEntity<>(updatedTweet, HttpStatus.OK))
 				.defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
@@ -64,6 +69,14 @@ public class TweetController {
 	// Tweets are Sent to the client as Server Sent Events
 	@GetMapping(value = "/stream/tweets", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<Tweet> streamAllTweets() {
-		return tweetRepository.findAll();
+		//return tweetRepository.findAll(); It will return all data in stream format only once.
+		//return tweetRepository.findTopByOrderByIdDesc();
+		return tweetRepository.findFirst5ByOrderByCreatedAtDesc();
+	}
+	
+	@GetMapping(path = "/stream-flux", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	public Flux<String> streamFlux() {
+	    return Flux.interval(Duration.ofSeconds(10))
+	      .map(sequence -> "Flux - " + LocalTime.now().toString());
 	}
 }
