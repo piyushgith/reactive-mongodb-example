@@ -1,6 +1,7 @@
 package com.example.reactive.mongodb.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +17,7 @@ import com.example.reactive.mongodb.model.Tweet;
 import com.example.reactive.mongodb.repository.CompanyRepository;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -30,9 +32,18 @@ public class CompanyServiceImpl implements CompanyService {
 
 	@Override
 	public Flux<Company> insertCompanyRecords() {
-		return companyRepository.deleteAll()
-				.thenMany(companyRepository.saveAll(getCompanyList()))
+		return companyRepository.deleteAll().thenMany(companyRepository.saveAll(getCompanyList()))
 				.thenMany(companyRepository.findAll());
+	}
+
+	@Override
+	public Mono<List<Employee>> findCompanyEmployeeList(String companyId) {
+		// You can do return object from map as well
+		// flatmap is tricky so stick with Mono as much possible. Below line works fine
+		// return companyRepository.findById(companyId).map(comp -> { return comp.getEmpList();});
+		return companyRepository.findById(companyId).map(comp -> {
+			return comp.getEmpList() != null ? comp.getEmpList() : Collections.emptyList();
+		});
 	}
 
 	public static List<Company> getCompanyList() {
