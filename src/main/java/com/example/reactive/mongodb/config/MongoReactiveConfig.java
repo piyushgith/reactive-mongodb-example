@@ -25,7 +25,7 @@ import com.mongodb.reactivestreams.client.MongoClients;
 import reactor.core.publisher.Flux;
 
 @Configuration
-@EnableReactiveMongoRepositories(basePackageClasses = EmployeeRepository.class)
+@EnableReactiveMongoRepositories(basePackages = "com.example.reactive.mongodb.repository")
 public class MongoReactiveConfig extends AbstractReactiveMongoConfiguration {
 
 	@Autowired
@@ -58,15 +58,14 @@ public class MongoReactiveConfig extends AbstractReactiveMongoConfiguration {
 
 			// employeeRepository.saveAll(list);
 			list.forEach(x -> {
-				//System.out.println(x.toString());
+				// System.out.println(x.toString());
 				// employeeRepository.save(x).subscribe();
 			});
 
-			employeeRepository.deleteAll()
-					.thenMany(Flux.just(list).flatMap(employeeRepository::saveAll))
+			employeeRepository.deleteAll().thenMany(Flux.just(list).flatMap(employeeRepository::saveAll))
 					.thenMany(employeeRepository.findAll())
 					.subscribe(data -> System.out.println("****** \t" + data.toString()));
-			
+
 			List<Tweet> tweetList = new ArrayList<>();
 			tweetList
 					.addAll(Stream
@@ -76,8 +75,7 @@ public class MongoReactiveConfig extends AbstractReactiveMongoConfiguration {
 									new Tweet(UUID.randomUUID().toString(), "I am learning it."))
 							.collect(Collectors.toList()));
 
-			tweetRepository.deleteAll()
-					.thenMany(Flux.just(tweetList).flatMap(tweetRepository::saveAll))
+			tweetRepository.deleteAll().thenMany(Flux.just(tweetList).flatMap(tweetRepository::saveAll))
 					.thenMany(tweetRepository.findAll())
 					.subscribe(data -> System.out.println("###### \t" + data.toString()));
 
