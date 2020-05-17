@@ -23,6 +23,11 @@ public class Tweet {
 
 	}
 
+	public Tweet(@NotBlank @Size(max = 140) String text) {
+		super();
+		this.text = text;
+	}
+
 	public Tweet(String id, String text) {
 		this.id = id;
 		this.text = text;

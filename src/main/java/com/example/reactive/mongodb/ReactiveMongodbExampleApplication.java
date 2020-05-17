@@ -9,5 +9,4 @@ public class ReactiveMongodbExampleApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ReactiveMongodbExampleApplication.class, args);
 	}
-
 }
