@@ -28,59 +28,18 @@ import reactor.core.publisher.Flux;
 @EnableReactiveMongoRepositories(basePackages = "com.example.reactive.mongodb.repository")
 public class MongoReactiveConfig extends AbstractReactiveMongoConfiguration {
 
-	@Autowired
-	private TweetRepository tweetRepository;
+    @Override
+    public MongoClient reactiveMongoClient() {
+        return MongoClients.create();
+    }
 
-	@Override
-	public MongoClient reactiveMongoClient() {
-		return MongoClients.create();
-	}
+    @Override
+    protected String getDatabaseName() {
+        return "test";
+    }
 
-	@Override
-	protected String getDatabaseName() {
-		return "test";
-	}
-
-	@Bean
-	public ReactiveMongoTemplate reactiveMongoTemplate() {
-		return new ReactiveMongoTemplate(reactiveMongoClient(), getDatabaseName());
-	}
-
-	@Bean
-	CommandLineRunner init(EmployeeRepository employeeRepository) {
-		return init -> {
-
-			List<Employee> list = new ArrayList<>();
-			list.add(new Employee(UUID.randomUUID().toString(), "Ram", new Date()));
-			list.add(new Employee(UUID.randomUUID().toString(), "Sita", new Date()));
-			list.add(new Employee(UUID.randomUUID().toString(), "Luxman", new Date()));
-			list.add(new Employee(UUID.randomUUID().toString(), "Hanuman", new Date()));
-
-			// employeeRepository.saveAll(list);
-			list.forEach(x -> {
-				// System.out.println(x.toString());
-				// employeeRepository.save(x).subscribe();
-			});
-
-			employeeRepository.deleteAll().thenMany(Flux.just(list).flatMap(employeeRepository::saveAll))
-					.thenMany(employeeRepository.findAll())
-					.subscribe(data -> System.out.println("****** \t" + data.toString()));
-
-			List<Tweet> tweetList = new ArrayList<>();
-			tweetList
-					.addAll(Stream
-							.of(new Tweet(UUID.randomUUID().toString(), "Hello World !!"),
-									new Tweet(UUID.randomUUID().toString(), "Spring is awesome."),
-									new Tweet(UUID.randomUUID().toString(), "I love Anime !!"),
-									new Tweet(UUID.randomUUID().toString(), "I am learning it."))
-							.collect(Collectors.toList()));
-
-			tweetRepository.deleteAll().thenMany(Flux.just(tweetList).flatMap(tweetRepository::saveAll))
-					.thenMany(tweetRepository.findAll())
-					.subscribe(data -> System.out.println("###### \t" + data.toString()));
-
-		};
-
-	}
-
+    @Bean
+    public ReactiveMongoTemplate reactiveMongoTemplate() {
+        return new ReactiveMongoTemplate(reactiveMongoClient(), getDatabaseName());
+    }
 }

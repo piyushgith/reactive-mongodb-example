@@ -13,7 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("employee")
+@RequestMapping("/api/employee")
 public class EmployeeController {
 
 	@Autowired
