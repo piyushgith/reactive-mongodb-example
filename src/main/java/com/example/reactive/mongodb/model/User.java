@@ -14,6 +14,7 @@ import java.util.Set;
 public class User {
     @Id
     private String username;
+
     private String password;
     private Collection<String> roles;
 
@@ -53,5 +54,14 @@ public class User {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.toString()));
         }
         return new org.springframework.security.core.userdetails.User(this.getUsername(), this.getPassword(), grantedAuthorities);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 }

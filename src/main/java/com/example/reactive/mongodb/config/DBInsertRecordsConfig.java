@@ -29,7 +29,7 @@ public class DBInsertRecordsConfig {
     @Autowired
     private UserRepository userRepository;
 
-    public static String encode(String password) {
+    public String encode(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(4);
         String encodedPassword = encoder.encode(password);
         return encodedPassword;
@@ -59,7 +59,7 @@ public class DBInsertRecordsConfig {
             tweetList
                     .addAll(Stream
                             .of(new Tweet(UUID.randomUUID().toString(), "Hello World !!"),
-                                    new Tweet(UUID.randomUUID().toString(), "Spring is awesome."),
+                                    new Tweet(UUID.randomUUID().toString(), "Spring is awesome........"),
                                     new Tweet(UUID.randomUUID().toString(), "I love Anime !!"),
                                     new Tweet(UUID.randomUUID().toString(), "I am learning it."))
                             .collect(Collectors.toList()));
@@ -68,10 +68,11 @@ public class DBInsertRecordsConfig {
                     .thenMany(tweetRepository.findAll())
                     .subscribe(data -> System.out.println("###### \t" + data.toString()));
 
-//            List<User> userList=new ArrayList<>();
-//            userList.addAll(Stream.of(new User("piyush", this.encode("prasad"), Arrays.asList("USER,ADMIN"))).collect(Collectors.toList()));
+            List<User> userList=new ArrayList<>();
+            userList.addAll(Stream.of(new User("piyush", this.encode("prasad"), Arrays.asList("USER,ADMIN"))).collect(Collectors.toList()));
 
-            userRepository.deleteAll().thenMany(userRepository.saveAll(Stream.of(new User("piyush", this.encode("prasad"), Arrays.asList("USER,ADMIN"))).collect(Collectors.toList())));
+            //userRepository.deleteAll().thenMany(userRepository.saveAll(Stream.of(new User("piyush", this.encode("prasad"), Arrays.asList("USER,ADMIN"))).collect(Collectors.toList())));
+            userRepository.deleteAll().thenMany(userRepository.saveAll(userList)).subscribe(data -> System.out.println("$$$$$$ \t" + data.toString()));
         };
     }
 
