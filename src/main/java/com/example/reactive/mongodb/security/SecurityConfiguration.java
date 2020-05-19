@@ -2,7 +2,6 @@ package com.example.reactive.mongodb.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
@@ -29,7 +28,7 @@ public class SecurityConfiguration {
     private static final String[] AUTH_WHITELIST = {
             "/resources/**",
             "/webjars/**",
-            "/authorize/**",
+            "/api/login/**",
             "/favicon.ico",
     };
 
@@ -42,18 +41,48 @@ public class SecurityConfiguration {
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, UnauthorizedAuthenticationEntryPoint entryPoint) {
 
-		http.httpBasic().disable().formLogin().disable().csrf().disable().logout().disable();
-        
-		http.authorizeExchange().pathMatchers(HttpMethod.POST, "api/login/**").permitAll();
-		http.authorizeExchange().pathMatchers(HttpMethod.GET, "api/tweets/**").permitAll();
+    	//You can't make individual api permit or disable after addFilterAt like below. 
+		//You have to make them available after authenticationEntryPoint
+		//http.authorizeExchange().pathMatchers(HttpMethod.GET, "api/tweets**").permitAll();
+    	
+    	http.httpBasic().disable().formLogin().disable().csrf().disable().logout().disable();
+    	
 		http.exceptionHandling()
 			.authenticationEntryPoint(entryPoint)
 			.and()
 			.addFilterAt(webFilter(), SecurityWebFiltersOrder.AUTHORIZATION).authorizeExchange()
 			.pathMatchers(AUTH_WHITELIST).permitAll()
 			.anyExchange().authenticated();
-
-        return http.build();
+		
+		return http.build();
+		
+		// @formatter:off
+		/*Example
+        http
+        .exceptionHandling()
+        .authenticationEntryPoint(entryPoint)
+        
+        .and()
+        .authorizeExchange()
+        .matchers(EndpointRequest.to("health", "info"))
+        .permitAll()
+        
+        .and()
+        .authorizeExchange()
+        .pathMatchers(HttpMethod.OPTIONS)
+        .permitAll()
+        
+        .and()
+        .authorizeExchange()
+        .matchers(EndpointRequest.toAnyEndpoint())
+        .hasAuthority(AuthoritiesConstants.ADMIN)
+        
+        .and()
+        .addFilterAt(webFilter(), SecurityWebFiltersOrder.AUTHORIZATION)
+        .authorizeExchange()
+        .pathMatchers(AUTH_WHITELIST).permitAll()
+        .anyExchange().authenticated();*/
+		// @formatter:on
     }
 
     @Bean

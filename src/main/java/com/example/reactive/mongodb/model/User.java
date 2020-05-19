@@ -20,7 +20,7 @@ public class User {
 	@Id
 	private String id;
 
-	@Indexed(unique = true)
+	//@Indexed(unique = true)
 	private String login;
 
 	//@Size(min = 60, max = 60)

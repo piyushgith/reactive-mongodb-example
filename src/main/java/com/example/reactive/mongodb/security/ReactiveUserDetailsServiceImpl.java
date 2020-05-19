@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class ReactiveUserDetailsServiceImpl implements ReactiveUserDetailsService {
 
-	private final UserRepository userRepository;
+	private UserRepository userRepository;
 
 	public ReactiveUserDetailsServiceImpl(UserRepository userRepository) {
 		this.userRepository = userRepository;

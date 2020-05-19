@@ -13,18 +13,19 @@ import com.mongodb.reactivestreams.client.MongoClients;
 @EnableReactiveMongoRepositories(basePackages = "com.example.reactive.mongodb.repository")
 public class MongoReactiveConfig extends AbstractReactiveMongoConfiguration {
 
-    @Override
-    public MongoClient reactiveMongoClient() {
-        return MongoClients.create();
-    }
+	@Override
+	public MongoClient reactiveMongoClient() {
+		return MongoClients.create();
+	}
 
-    @Override
-    protected String getDatabaseName() {
-        return "test";
-    }
+	@Override
+	protected String getDatabaseName() {
+		return "test";
+	}
 
-    @Bean
-    public ReactiveMongoTemplate reactiveMongoTemplate() {
-        return new ReactiveMongoTemplate(reactiveMongoClient(), getDatabaseName());
-    }
+	@Bean
+	public ReactiveMongoTemplate reactiveMongoTemplate() {
+		return new ReactiveMongoTemplate(reactiveMongoClient(), getDatabaseName());
+	}
+
 }

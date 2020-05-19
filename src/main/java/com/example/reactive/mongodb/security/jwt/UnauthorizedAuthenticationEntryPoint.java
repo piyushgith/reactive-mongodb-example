@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class UnauthorizedAuthenticationEntryPoint implements ServerAuthenticationEntryPoint {
 	@Override
-	public Mono<Void> commence(final ServerWebExchange exchange, final AuthenticationException e) {
+	public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException e) {
 		return Mono.fromRunnable(() -> exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED));
 	}
 }
