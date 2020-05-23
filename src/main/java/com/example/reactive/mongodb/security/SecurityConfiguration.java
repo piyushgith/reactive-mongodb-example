@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
+import org.springframework.security.web.server.authentication.WebFilterChainServerAuthenticationSuccessHandler;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 
 import com.example.reactive.mongodb.security.jwt.JWTHeadersExchangeMatcher;
@@ -88,10 +89,14 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationWebFilter webFilter() {
         AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(repositoryReactiveAuthenticationManager());
-        authenticationWebFilter.setAuthenticationConverter(new TokenAuthenticationConverter(tokenProvider));
         authenticationWebFilter.setRequiresAuthenticationMatcher(new JWTHeadersExchangeMatcher());
-//        authenticationWebFilter.setSecurityContextRepository(new WebSessionServerSecurityContextRepository());
+        //If you want a stateful web application enable below line
+        //authenticationWebFilter.setSecurityContextRepository(new WebSessionServerSecurityContextRepository());
+        //To Make Stateless application use below line
         authenticationWebFilter.setSecurityContextRepository(NoOpServerSecurityContextRepository.getInstance());
+        //Write a custom successhandler in case of redirect it to other url
+        //authenticationWebFilter.setAuthenticationSuccessHandler(new WebFilterChainServerAuthenticationSuccessHandler());
+        authenticationWebFilter.setAuthenticationConverter(new TokenAuthenticationConverter(tokenProvider));
         return authenticationWebFilter;
     }
 
