@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %X{correlationId} --- %X{ipAddress} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
+<property name="LOGS" value="./logs" />
 
-    <root level="info">
-        <appender-ref ref="STDOUT"/>
-    </root>
+<appender name = "STDOUT" class = "ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+        <pattern>[%d{yyyy-MM-dd'T'HH:mm:ss.sss'Z'}] %X{correlationId} %X{ipAddress} --- [%thread] [%C] [%t] [%L] [%-5p] %m%n</pattern>
+        <!--<pattern>[%d{yyyy-MM-dd'T'HH:mm:ss.sss'Z'}] [%C] [%t] [%L] [%-5p] %m%n</pattern>-->
+    </encoder>
+</appender>
+
+<appender name = "FILE" class = "ch.qos.logback.core.FileAppender">
+    <File>${LOGS}/mylog.log</File>
+    <encoder>
+        <pattern>[%d{yyyy-MM-dd'T'HH:mm:ss.sss'Z'}] %X{correlationId} %X{ipAddress} --- [%thread] [%C] [%t] [%L] [%-5p] %m%n</pattern>
+        <!--<pattern>[%d{yyyy-MM-dd'T'HH:mm:ss.sss'Z'}] [%C] [%t] [%L] [%-5p] %m%n</pattern>-->
+    </encoder>
+</appender>
+
+<root level = "INFO">
+    <appender-ref ref = "FILE"/>
+    <appender-ref ref = "STDOUT"/>
+</root>
 </configuration>
